@@ -43,7 +43,7 @@ vim.opt.updatetime = 250            -- Tempo de resposta mais rápido para plugi
 -- Comportamento de busca
 vim.opt.hlsearch = true   -- destaca resultados da busca
 vim.opt.incsearch = true  -- Pula para o resultado digita
-vim.opt.ignorecase = true -- ignorando maiúsculas 
+vim.opt.ignorecase = true -- ignorando maiúsculas
 vim.opt.smartcase = true  -- ...até que uma seja digitada
 
 -- Identação (4 espaços para geral e 2 para yaml)
@@ -56,6 +56,10 @@ vim.opt.expandtab = true   -- Converte Tabs em espaços reais
 
 -- Limpar destaque do hlsearch pressionando <Esc> no modo Normal
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
+-- Desativa o netrw para dar lugar ao nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- CONFIGURAÇÕES ESPECÍFICAS POR ARQUIVO
 
@@ -83,7 +87,7 @@ vim.api.nvim_create_autocmd("FileType", {
   desc = "Define indentação de 2 espaços para Lua, YAML e Front-end/Blazor",
 })
 
--- Markdown 
+-- Markdown
 vim.api.nvim_create_autocmd("FileType", {
   group = filetype_group,
   pattern = { "markdown" },
@@ -110,7 +114,7 @@ require("lazy").setup({
 	    vim.cmd.colorscheme("catppuccin-mocha")
 	  end,
     },
-    
+
     -- Treesitter (destaque de sintaxe e identação inteligente)
     {
       "nvim-treesitter/nvim-treesitter",
@@ -139,7 +143,7 @@ require("lazy").setup({
         })
       end,
     },
-    
+
     -- Telescope (Finder para buscar arquivos e textos no projeto. Adaptativo para rodar em SOs com versões diferentes do Neovim)
     {
       "nvim-telescope/telescope.nvim",
@@ -160,19 +164,37 @@ require("lazy").setup({
         { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Listar Buffers Abertos" },
       },
     },
-    
+
     -- Which-Key (Mostra um painel com os atalhos disponíveis ao apertar espaço)
     {
-	  "folke/which-key.nvim",
-	  event = "VeryLazy",
-	  opts = {},
+	    "folke/which-key.nvim",
+	    event = "VeryLazy",
+	    opts = {},
+    },
+
+    -- nvim-tree (explorador de arquivos em árvore)
+    {
+      "nvim-tree/nvim-tree.lua",
+      version = "*",
+      lazy = false,
+      cond = vim.fn.has("nvim-0.10") == 1, -- ignora em Neovim antigo
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      keys = {
+        { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Alternar explorador" },
+        { "<leader>E", "<cmd>NvimTreeFindFile<cr>", desc = "Localizar arquivo atual na árvore" },
+      },
+      opts = {
+        view = { width = 32 },
+        renderer = { group_empty = true }, -- junta pastas vazias em cadeia
+        update_focused_file = { enable = true }, -- a árvore segue o buffer ativo
+      },
     },
   },
   -- Configure any other settings here. See the documentation for more details.
   -- Tema provisório usado pela janela do Lazy enquanto baixa os plugins
   install = { colorscheme = { "catppuccin", "habamax" } },
   -- Verifica atualizações em segundo plano, mas sem notificações
-  checker = { 
+  checker = {
     enabled = true,
     notify = false,
   },
